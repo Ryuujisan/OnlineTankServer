@@ -11,7 +11,7 @@ public class UnitProjectile : NetworkBehaviour
 
     [SerializeField]
     private int damageToDeal = 20;
-    
+
     [SerializeField]
     private float destroyAfterSecond = 5;
 
@@ -27,27 +27,21 @@ public class UnitProjectile : NetworkBehaviour
     {
         Invoke(nameof(DestroySelf), destroyAfterSecond);
     }
-    
+
     [Server]
     private void DestroySelf()
     {
         NetworkServer.Destroy(gameObject);
     }
-    
+
     [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<NetworkIdentity>(out var networkIdentity))
         {
-            if (networkIdentity.connectionToClient == connectionToClient)
-            {
-                return;
-            }
+            if (networkIdentity.connectionToClient == connectionToClient) return;
 
-            if (other.TryGetComponent<Health>(out var health))
-            {
-                health.DealDamage(damageToDeal);
-            }
+            if (other.TryGetComponent<Health>(out var health)) health.DealDamage(damageToDeal);
             DestroySelf();
         }
     }

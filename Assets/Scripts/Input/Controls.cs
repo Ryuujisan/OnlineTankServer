@@ -9,6 +9,7 @@ using UnityEngine.InputSystem.Utilities;
 public class @Controls : IInputActionCollection, IDisposable
 {
     public InputActionAsset asset { get; }
+
     public @Controls()
     {
         asset = InputActionAsset.FromJson(@"{
@@ -150,8 +151,8 @@ public class @Controls : IInputActionCollection, IDisposable
     ]
 }");
         // Player
-        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
+        m_Player = asset.FindActionMap("Player", true);
+        m_Player_MoveCamera = m_Player.FindAction("MoveCamera", true);
     }
 
     public void Dispose()
@@ -202,16 +203,40 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_MoveCamera;
+
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
-        public PlayerActions(@Controls wrapper) { m_Wrapper = wrapper; }
+
+        public PlayerActions(@Controls wrapper)
+        {
+            m_Wrapper = wrapper;
+        }
+
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
-        public InputActionMap Get() { return m_Wrapper.m_Player; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
+
+        public InputActionMap Get()
+        {
+            return m_Wrapper.m_Player;
+        }
+
+        public void Enable()
+        {
+            Get().Enable();
+        }
+
+        public void Disable()
+        {
+            Get().Disable();
+        }
+
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+
+        public static implicit operator InputActionMap(PlayerActions set)
+        {
+            return set.Get();
+        }
+
         public void SetCallbacks(IPlayerActions instance)
         {
             if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
@@ -220,6 +245,7 @@ public class @Controls : IInputActionCollection, IDisposable
                 @MoveCamera.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMoveCamera;
                 @MoveCamera.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMoveCamera;
             }
+
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
@@ -229,16 +255,20 @@ public class @Controls : IInputActionCollection, IDisposable
             }
         }
     }
+
     public PlayerActions @Player => new PlayerActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
+
     public InputControlScheme KeyboardMouseScheme
     {
         get
         {
-            if (m_KeyboardMouseSchemeIndex == -1) m_KeyboardMouseSchemeIndex = asset.FindControlSchemeIndex("Keyboard & Mouse");
+            if (m_KeyboardMouseSchemeIndex == -1)
+                m_KeyboardMouseSchemeIndex = asset.FindControlSchemeIndex("Keyboard & Mouse");
             return asset.controlSchemes[m_KeyboardMouseSchemeIndex];
         }
     }
+
     public interface IPlayerActions
     {
         void OnMoveCamera(InputAction.CallbackContext context);

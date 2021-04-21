@@ -18,14 +18,14 @@ public class CameraController : NetworkBehaviour
 
     [SerializeField]
     private Vector2 screenXLimits = Vector2.zero;
-    
+
     [SerializeField]
     private Vector2 screenZLimits = Vector2.zero;
 
     private Vector2 previusInput;
-    
+
     private Controls controls;
-    
+
     public override void OnStartAuthority()
     {
         playerCameraTransform.gameObject.SetActive(true);
@@ -34,48 +34,35 @@ public class CameraController : NetworkBehaviour
 
         controls.Player.MoveCamera.performed += SetPreviousInput;
         controls.Player.MoveCamera.canceled += SetPreviousInput;
-        
+
         controls.Enable();
     }
 
     [ClientCallback]
     private void Update()
     {
-        if (!hasAuthority || !Application.isFocused)
-        {
-            return;
-        }
+        if (!hasAuthority || !Application.isFocused) return;
 
         UpdateCameraPosition();
     }
 
     private void UpdateCameraPosition()
     {
-        Vector3 pos = playerCameraTransform.position;
+        var pos = playerCameraTransform.position;
 
         if (previusInput == Vector2.zero)
         {
-            Vector3 cursorsMovement = Vector3.zero;
+            var cursorsMovement = Vector3.zero;
 
-            Vector2 cursorsPosition = Mouse.current.position.ReadValue();
+            var cursorsPosition = Mouse.current.position.ReadValue();
 
             if (cursorsPosition.y >= Screen.height - screenBorderThickness)
-            {
                 cursorsMovement.z += 1;
-            }
-            else if(cursorsPosition.y <= screenBorderThickness)
-            {
-                cursorsMovement.z -= 1;
-            }
-            
+            else if (cursorsPosition.y <= screenBorderThickness) cursorsMovement.z -= 1;
+
             if (cursorsPosition.x >= Screen.width - screenBorderThickness)
-            {
                 cursorsMovement.x += 1;
-            }
-            else if(cursorsPosition.x <= screenBorderThickness)
-            {
-                cursorsMovement.x -= 1;
-            }
+            else if (cursorsPosition.x <= screenBorderThickness) cursorsMovement.x -= 1;
 
             pos += cursorsMovement.normalized * speed * Time.deltaTime;
         }

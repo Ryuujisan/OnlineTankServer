@@ -17,7 +17,7 @@ public class TeamColorSetter : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        RTSPlayer player = connectionToClient.identity.GetComponent<RTSPlayer>();
+        var player = connectionToClient.identity.GetComponent<RTSPlayer>();
 
         teamColor = player.TeamColor;
     }
@@ -28,11 +28,8 @@ public class TeamColorSetter : NetworkBehaviour
 
     private void HandleTeamColorUpdate(Color oldColor, Color newColor)
     {
-        foreach (var c in colorRenderers)
-        {
-            c.material.SetColor("_BaseColor", newColor);
-        }
+        foreach (var c in colorRenderers) c.material.SetColor("_BaseColor", newColor);
     }
-    
+
     #endregion Client
 }

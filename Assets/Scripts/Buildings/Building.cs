@@ -6,21 +6,21 @@ using UnityEngine;
 
 public class Building : NetworkBehaviour
 {
-    public static event Action<Building> ServerOnBuildingSpawned; 
-    public static event Action<Building> ServerOnBuildingDespawned; 
-    
-    public static event Action<Building> AuthorityrOnBuildingSpawn; 
+    public static event Action<Building> ServerOnBuildingSpawned;
+    public static event Action<Building> ServerOnBuildingDespawned;
+
+    public static event Action<Building> AuthorityrOnBuildingSpawn;
     public static event Action<Building> AuthorityOnBuildingDeSpawn;
 
     [SerializeField]
     private GameObject buildingPreview;
-    
+
     [SerializeField]
     private Sprite icon;
 
     [SerializeField]
     private int id = -1;
-    
+
     [SerializeField]
     private int price = 100;
 
@@ -31,7 +31,7 @@ public class Building : NetworkBehaviour
     public int ID => id;
 
     public GameObject BuildingPreview => buildingPreview;
-    
+
     #region Server
 
     public override void OnStartServer()
@@ -55,11 +55,8 @@ public class Building : NetworkBehaviour
 
     public override void OnStopClient()
     {
-        if (!isClientOnly || !hasAuthority)
-        {
-            return;
-        }
-        
+        if (!isClientOnly || !hasAuthority) return;
+
         AuthorityOnBuildingDeSpawn?.Invoke(this);
     }
 

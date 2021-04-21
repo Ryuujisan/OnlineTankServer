@@ -12,6 +12,7 @@ public class RTSNetworkManager : NetworkManager
 
     [SerializeField]
     private GameOverHandler gameOverHandlerPrefab;
+
     public override void OnServerAddPlayer(NetworkConnection connection)
     {
         base.OnServerAddPlayer(connection);
@@ -23,11 +24,11 @@ public class RTSNetworkManager : NetworkManager
             UnityEngine.Random.Range(0f, 1f),
             UnityEngine.Random.Range(0f, 1f)
         );
-        
-        GameObject unitSpawnerInstance = Instantiate(unitSpawnerPrefab, 
-            connection.identity.transform.position, 
+
+        var unitSpawnerInstance = Instantiate(unitSpawnerPrefab,
+            connection.identity.transform.position,
             connection.identity.transform.rotation);
-        
+
         NetworkServer.Spawn(unitSpawnerInstance, connection);
     }
 
@@ -35,7 +36,7 @@ public class RTSNetworkManager : NetworkManager
     {
         if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
         {
-            GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandlerPrefab);
+            var gameOverHandlerInstance = Instantiate(gameOverHandlerPrefab);
             NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
         }
     }

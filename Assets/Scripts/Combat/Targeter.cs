@@ -21,26 +21,26 @@ public class Targeter : NetworkBehaviour
     {
         GameOverHandler.ServerOnGameOver -= ServerHandleGameOver;
     }
+
     [Server]
     private void ServerHandleGameOver()
     {
         ClearTarget();
     }
-    
+
     [Command]
     public void CmdSetTarget(GameObject targetGameObject)
     {
-        if (!targetGameObject.TryGetComponent<Targetable>(out var newTarget))
-        {
-            return;
-        }
+        if (!targetGameObject.TryGetComponent<Targetable>(out var newTarget)) return;
 
         targetable = newTarget;
     }
+
     [Server]
     public void ClearTarget()
     {
         targetable = null;
     }
+
     #endregion
 }

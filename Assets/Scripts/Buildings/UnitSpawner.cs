@@ -12,7 +12,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private Health health;
-    
+
     [SerializeField]
     private Unit unitPrefab;
 
@@ -33,15 +33,15 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
     [SerializeField]
     private float unitSpawnDuration = 5f;
-    
+
     [SyncVar(hook = nameof(ClientHandleQueuedUnitsUpdate))]
     private int queudeUnits;
-    
+
     [SyncVar]
     private float unitTimer;
 
     private float progressImageVelocity;
-    
+
     #region Server
 
     public override void OnStartServer()
@@ -58,54 +58,42 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     {
         remainingUnitsText.text = newValue.ToString();
     }
-    
+
     [Server]
     private void HandleServerOnDie()
     {
-       NetworkServer.Destroy(gameObject); 
+        NetworkServer.Destroy(gameObject);
     }
-    
+
     [Command]
     private void CmdSpawnUnit()
     {
-        if (queudeUnits == maxUnitQueue)
-        {
-            return;
-        }
+        if (queudeUnits == maxUnitQueue) return;
 
         var player = connectionToClient.identity.GetComponent<RTSPlayer>();
 
-        if (player.Resources < unitPrefab.ResourcesCost)
-        {
-            return;
-        }
+        if (player.Resources < unitPrefab.ResourcesCost) return;
 
         queudeUnits++;
         player.Resources -= unitPrefab.ResourcesCost;
     }
-    
+
     [Server]
     private void ProduceUnit()
     {
-        if (queudeUnits == 0)
-        {
-            return;
-        }
+        if (queudeUnits == 0) return;
 
         unitTimer += Time.deltaTime;
 
-        if (unitTimer < unitSpawnDuration)
-        {
-            return;
-        }
-        
-        var unitInstant = Instantiate(unitPrefab, 
-            spawnUnit.position, 
+        if (unitTimer < unitSpawnDuration) return;
+
+        var unitInstant = Instantiate(unitPrefab,
+            spawnUnit.position,
             spawnUnit.rotation);
-        
+
         NetworkServer.Spawn(unitInstant.gameObject, connectionToClient);
 
-        Vector3 spawnOffSet = UnityEngine.Random.insideUnitSphere * spawnMoveRange;
+        var spawnOffSet = UnityEngine.Random.insideUnitSphere * spawnMoveRange;
         spawnOffSet.y = spawnUnit.position.y;
 
         var unitMovement = unitInstant.GetComponent<UnitMovment>();
@@ -113,56 +101,40 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         queudeUnits--;
         unitTimer = 0f;
     }
-    
+
     #endregion Server
 
     #region Client
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Left)
-        {
-            return;
-        }
+        if (eventData.button != PointerEventData.InputButton.Left) return;
 
-        if (!hasAuthority)
-        {
-            return;
-        }
-        
+        if (!hasAuthority) return;
+
         CmdSpawnUnit();
     }
 
     private void UpdateTimerDisplay()
     {
-        float newProgress = unitTimer / unitSpawnDuration;
+        var newProgress = unitTimer / unitSpawnDuration;
 
         if (newProgress < unitProgressImage.fillAmount)
-        {
             unitProgressImage.fillAmount = newProgress;
-        }
         else
-        {
             unitProgressImage.fillAmount = Mathf.SmoothDamp(
                 unitProgressImage.fillAmount,
                 newProgress,
                 ref progressImageVelocity,
                 0.1f);
-        }
     }
-    
+
     #endregion Client
 
     private void Update()
     {
-        if (isServer)
-        {
-            ProduceUnit();
-        }
+        if (isServer) ProduceUnit();
 
-        if (isClient)
-        {
-            UpdateTimerDisplay();
-        }
+        if (isClient) UpdateTimerDisplay();
     }
 }

@@ -14,7 +14,7 @@ public class ResourcesGenerator : NetworkBehaviour
 
     [SerializeField]
     private float interval = 2f;
-    
+
     private float timer;
     private RTSPlayer player;
 
@@ -26,7 +26,7 @@ public class ResourcesGenerator : NetworkBehaviour
         health.ServerOnDie += ServerHandleDie;
         GameOverHandler.ServerOnGameOver += ServerHandleGameOver;
     }
-    
+
     public override void OnStopServer()
     {
         health.ServerOnDie -= ServerHandleDie;
@@ -37,7 +37,7 @@ public class ResourcesGenerator : NetworkBehaviour
     private void Update()
     {
         timer -= Time.deltaTime;
-        
+
         if (timer <= 0)
         {
             player.Resources += resourcesPerInterval;

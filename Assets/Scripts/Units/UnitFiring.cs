@@ -32,48 +32,40 @@ public class UnitFiring : NetworkBehaviour
     [ServerCallback]
     private void Update()
     {
-        Targetable targetable = target.Targetable;
-        if (targetable == null)
-        {
-            return;
-        }
-        
-        if (!CanFireAtTarget())
-        {
-            return;
-        }
-        
-        Quaternion targetRotation = 
+        var targetable = target.Targetable;
+        if (targetable == null) return;
+
+        if (!CanFireAtTarget()) return;
+
+        var targetRotation =
             Quaternion.LookRotation(targetable.transform.position - transform.position);
         transform.rotation =
             Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-        if (Time.time > (1 / fireRate) + lastFireTime)
+        if (Time.time > 1 / fireRate + lastFireTime)
         {
-            Quaternion projectileRotation =
+            var projectileRotation =
                 Quaternion.LookRotation(targetable.AimAtPoint.position - projectileSpawnPoint.position);
-            
-            var projectileInstance = 
+
+            var projectileInstance =
                 Instantiate(projectilePrefab, projectileSpawnPoint.position, projectileRotation);
-            
+
             NetworkServer.Spawn(projectileInstance, connectionToClient);
-            
+
             lastFireTime = Time.time;
         }
     }
-    
+
     [Server]
     private bool CanFireAtTarget()
     {
-        return (target.Targetable.transform.position - transform.position).sqrMagnitude 
+        return (target.Targetable.transform.position - transform.position).sqrMagnitude
                <= fireRange * fireRange;
     }
-    
+
     #endregion Server
 
     #region Client
-
-
 
     #endregion Client
 }

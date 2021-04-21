@@ -5,14 +5,14 @@ using UnityEngine;
 public class FaceCamera : MonoBehaviour
 {
     private Transform mainCameraTransform;
-    
-    void Start()
+
+    private void Start()
     {
         mainCameraTransform = Camera.main.transform;
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    private void LateUpdate()
     {
         transform.LookAt(
             transform.position + mainCameraTransform.rotation * Vector3.forward,
