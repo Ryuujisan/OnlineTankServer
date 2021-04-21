@@ -21,6 +21,9 @@ public class RTSPlayer : NetworkBehaviour
     [SerializeField]
     private List<Building> myBuilding = new List<Building>();
 
+    [SerializeField]
+    private Transform cameraTransform;
+    
     [SyncVar(hook = nameof(ClientHandleResourcesUpdate))]
     private int resources = 500;
 
@@ -31,6 +34,8 @@ public class RTSPlayer : NetworkBehaviour
     public List<Unit> MyUnits => myUnits;
 
     public List<Building> MyBuilding => myBuilding;
+
+    public Transform CameraTransform => cameraTransform;
 
     public Color TeamColor
     {

@@ -180,10 +180,12 @@ MonoBehaviour:
     m_Bits: 321
   rangeBuilding: 5
   buildingsPrefabs:
-  - {fileID: 3074891461991000782, guid: 453a396ceabbcdc48895eac0377f88be, type: 3}
+  - {fileID: 1480037352197555845, guid: 5a8ca87b429a8244eaaf7fe69ed35670, type: 3}
   - {fileID: 3074891461991000782, guid: c9253f56b1221234b8c95b1e7f423d2e, type: 3}
+  - {fileID: 3624369337036161254, guid: 439287153c8d62f44a56ebaaf7571db8, type: 3}
   myUnits: []
   myBuilding: []
+  cameraTransform: {fileID: 209036517705332498}
 --- !u!114 &2738343687141175222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,5 +203,5 @@ MonoBehaviour:
   playerCameraTransform: {fileID: 209036517705332498}
   speed: 25
   screenBorderThickness: 10
-  screenXLimits: {x: -45, y: 45}
-  screenZLimits: {x: -55, y: 20}
+  screenXLimits: {x: -55, y: 55}
+  screenZLimits: {x: -55, y: 55}
